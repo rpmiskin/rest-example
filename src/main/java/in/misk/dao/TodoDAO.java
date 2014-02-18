@@ -1,7 +1,4 @@
-/**
- * 
- */
-package myGroupId.dao;
+package in.misk.dao;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -10,7 +7,8 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 /**
- * @author richard
+ * DAO for 'persisting' Todo objects. Currently just an in memory map so all
+ * Todo are lost on restart.
  * 
  */
 @Component

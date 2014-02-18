@@ -1,8 +1,12 @@
-package myGroupId.dao;
+package in.misk.dao;
 
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Todo entity, carries all data for the todo list.
+ * 
+ */
 public class Todo implements Serializable {
 	/** */
 	private static final long serialVersionUID = 6134498129802081056L;

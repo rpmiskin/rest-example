@@ -1,4 +1,7 @@
-package myGroupId.rest;
+package in.misk.rest;
+
+import in.misk.dao.Todo;
+import in.misk.dao.TodoDAO;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -25,15 +28,15 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
-import myGroupId.dao.Todo;
-import myGroupId.dao.TodoDAO;
-
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-// The Java class will be hosted at the URI path "/helloworld"
+/**
+ * Rest service that provides CRUD access to Todo objects.
+ * 
+ */
 @Path("/todolist/api")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

@@ -1,11 +1,15 @@
-package myGroupId;
+package in.misk.route;
 
-import myGroupId.rest.TodoListResource;
+import in.misk.rest.TodoListResource;
 
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Camel route to expose a REST webservice within the embedded jetty container.
+ * 
+ */
 @Component
 public class RestRoute extends SpringRouteBuilder {
 

@@ -1,4 +1,4 @@
-package myGroupId.rest;
+package in.misk.rest;
 
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.jackson.map.SerializationConfig;

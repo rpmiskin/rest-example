@@ -3,3 +3,5 @@ target
 .project
 .settings
 html/lib/*.js
+html/css/bootstrap-theme.min.css
+html/css/bootstrap.min.css

@@ -25,10 +25,8 @@
        http://camel.apache.org/schema/spring
        http://camel.apache.org/schema/spring/camel-spring.xsd
             ">
-	<context:component-scan base-package="myGroupId" />
+	<context:component-scan base-package="in.misk" />
 	
-	
-	<!-- <bean id="jack" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/> -->
 	<!-- Start the camel context and start all routes that extends SpringRouteBuilder -->
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 		<contextScan />
