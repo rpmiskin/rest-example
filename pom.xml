@@ -34,10 +34,53 @@
 			<version>2.9.2</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-sql</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.10.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jdbc</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>3.0.7.RELEASE</version>
+		</dependency>
+	<!-- 	<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>3.0.7.RELEASE</version>
+		</dependency> -->
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.4.0.GA</version>
+		</dependency>
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.3.GA</version>
+		</dependency>
+
+
 		<!-- CXF -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>

@@ -1,4 +1,4 @@
-package in.misk.dao;
+package in.misk.rest;
 
 import java.io.Serializable;
 import java.util.Date;

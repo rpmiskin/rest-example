@@ -3,5 +3,6 @@ target
 .project
 .settings
 html/lib/*.js
-html/css/bootstrap-theme.min.css
-html/css/bootstrap.min.css
+html/bootstrap-3.1.1-dist
+database
+derby.log

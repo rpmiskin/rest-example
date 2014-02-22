@@ -1,7 +1,7 @@
 package in.misk.rest;
 
-import in.misk.dao.Todo;
 import in.misk.dao.TodoDAO;
+import in.misk.dao.entities.TodoEntity;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,6 +36,10 @@ import org.springframework.stereotype.Component;
 /**
  * Rest service that provides CRUD access to Todo objects.
  * 
+ * <p>
+ * The service sends and receives JSON data.
+ * </p>
+ * 
  */
 @Path("/todolist/api")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -43,13 +47,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class TodoListResource {
 
+	/** Static logger instance. */
 	private static final Logger LOGGER = Logger
 			.getLogger(TodoListResource.class);
 
 	@Autowired
 	private TodoDAO dao;
 
-	private final ObjectMapper mapper = new ObjectMapper();
+	/** Mapper to convert between DAO and REST entities. */
+	private final EntityMapper mapper = new EntityMapper();
 
 	/**
 	 * Example method to get multiple values. Shows use of a query param.
@@ -61,7 +67,8 @@ public class TodoListResource {
 	@GET
 	@Path("todos")
 	public Response getAllValues(@QueryParam("title") final String title) {
-		return addHeaders(Response.ok(dao.getAll())).build();
+		final TodoEntity[] all = dao.get();
+		return addHeaders(Response.ok(mapper.fromEntity(all))).build();
 	}
 
 	@OPTIONS
@@ -88,7 +95,7 @@ public class TodoListResource {
 	public Response read(@PathParam("id") final String id,
 			@Context final SecurityContext context) {
 		ResponseBuilder response = null;
-		final Todo todo = dao.get(id);
+		final Todo todo = mapper.fromEntity(dao.get(id));
 		if (todo == null) {
 			response = Response.status(Status.NOT_FOUND);
 		} else {
@@ -107,7 +114,7 @@ public class TodoListResource {
 			if (todo.getId() == null) {
 				todo.setId(UUID.randomUUID().toString());
 			}
-			dao.add(todo);
+			dao.add(mapper.toEntity(todo));
 			try {
 				response = Response.created(
 						new URI("/helloworld/todos/" + todo.getId())).entity(
@@ -131,8 +138,12 @@ public class TodoListResource {
 			response = Response.status(Status.NOT_FOUND).entity("Not found");
 		} else {
 			todo.setId(id);
-			dao.update(todo);
-			response = Response.ok().entity(todo);
+			if (dao.update(mapper.toEntity(todo))) {
+				response = Response.ok().entity(todo);
+			} else {
+				response = Response.status(Status.INTERNAL_SERVER_ERROR)
+						.entity("Not found");
+			}
 		}
 
 		return addHeaders(response).build();
@@ -146,7 +157,7 @@ public class TodoListResource {
 		if (dao.get(id) == null) {
 			response = Response.status(Status.NOT_FOUND).entity("Not found");
 		} else {
-			final Todo todo = dao.remove(id);
+			final Todo todo = mapper.fromEntity(dao.remove(id));
 			response = Response.ok(todo);
 		}
 
@@ -154,9 +165,11 @@ public class TodoListResource {
 	}
 
 	private String writeJSON(final Object returnVal) {
+		final ObjectMapper jsonMapper = new ObjectMapper();
 		final StringWriter writer = new StringWriter();
 		try {
-			mapper.writerWithDefaultPrettyPrinter().writeValue(writer,
+
+			jsonMapper.writerWithDefaultPrettyPrinter().writeValue(writer,
 					returnVal);
 		} catch (final IOException e) {
 			e.printStackTrace(new PrintWriter(writer));
