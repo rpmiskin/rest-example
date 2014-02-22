@@ -68,19 +68,19 @@ public class TodoListResource {
 	@Path("todos")
 	public Response getAllValues(@QueryParam("title") final String title) {
 		final TodoEntity[] all = dao.get();
-		return addHeaders(Response.ok(mapper.fromEntity(all))).build();
+		return response(Status.OK).entity(mapper.fromEntity(all)).build();
 	}
 
 	@OPTIONS
 	@Path("todos")
 	public Response getOptions() {
-		return addHeaders(Response.ok()).build();
+		return response(Status.OK).build();
 	}
 
 	@OPTIONS
 	@Path("todos/{id}")
 	public Response getOptions(@PathParam("id") final String ida) {
-		return addHeaders(Response.ok()).build();
+		return response(Status.OK).build();
 	}
 
 	/**
@@ -97,11 +97,11 @@ public class TodoListResource {
 		ResponseBuilder response = null;
 		final Todo todo = mapper.fromEntity(dao.get(id));
 		if (todo == null) {
-			response = Response.status(Status.NOT_FOUND);
+			response = response(Status.NOT_FOUND);
 		} else {
-			response = Response.ok(todo);
+			response = response(Status.OK).entity(todo);
 		}
-		return addHeaders(response).build();
+		return response.build();
 	}
 
 	@POST
@@ -116,7 +116,7 @@ public class TodoListResource {
 			}
 			dao.add(mapper.toEntity(todo));
 			try {
-				response = Response.created(
+				response = response(Status.CREATED).location(
 						new URI("/helloworld/todos/" + todo.getId())).entity(
 						todo);
 			} catch (final URISyntaxException e) {
@@ -124,9 +124,9 @@ public class TodoListResource {
 
 			}
 		} else {
-			response = Response.status(Status.CONFLICT);
+			response = response(Status.CONFLICT);
 		}
-		return addHeaders(response).build();
+		return response.build();
 	}
 
 	@PUT
@@ -135,18 +135,18 @@ public class TodoListResource {
 		ResponseBuilder response = null;
 		LOGGER.info("update:\n" + writeJSON(todo));
 		if (dao.get(id) == null) {
-			response = Response.status(Status.NOT_FOUND).entity("Not found");
+			response = response(Status.NOT_FOUND).entity("Not found");
 		} else {
 			todo.setId(id);
 			if (dao.update(mapper.toEntity(todo))) {
-				response = Response.ok().entity(todo);
+				response = response(Status.OK).entity(todo);
 			} else {
-				response = Response.status(Status.INTERNAL_SERVER_ERROR)
-						.entity("Not found");
+				response = response(Status.INTERNAL_SERVER_ERROR).entity(
+						"Not found");
 			}
 		}
 
-		return addHeaders(response).build();
+		return response.build();
 	}
 
 	@DELETE
@@ -155,15 +155,19 @@ public class TodoListResource {
 		ResponseBuilder response = null;
 		LOGGER.info("delete: " + id);
 		if (dao.get(id) == null) {
-			response = Response.status(Status.NOT_FOUND).entity("Not found");
+			response = response(Status.NOT_FOUND).entity("Not found");
 		} else {
 			final Todo todo = mapper.fromEntity(dao.remove(id));
 			response = Response.ok(todo);
 		}
 
-		return addHeaders(response).build();
+		return response.build();
 	}
 
+	/**
+	 * @param returnVal
+	 * @return
+	 */
 	private String writeJSON(final Object returnVal) {
 		final ObjectMapper jsonMapper = new ObjectMapper();
 		final StringWriter writer = new StringWriter();
@@ -179,14 +183,17 @@ public class TodoListResource {
 	}
 
 	/**
-	 * Add the necessary headers for to enable CORS.
+	 * Create a response with the supplied status and add the necessary headers
+	 * to enable CORS.
 	 * 
-	 * @param response
-	 *            a ResponseBuilders
-	 * @return the supplied responsebuilder with headers added
+	 * @param status
+	 *            the status to use in the response
+	 * @return a {@link ResponseBuilder} with the supplied status and headers to
+	 *         enable CORS.
 	 */
-	private ResponseBuilder addHeaders(final ResponseBuilder response) {
-		return response
+	private ResponseBuilder response(final Status status) {
+		return Response
+				.status(status)
 				.header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Methods",
 						"POST, GET, PUT, UPDATE, OPTIONS, DELETE")
