@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import org.springframework.stereotype.Component;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Component
+@CrossOriginResourceSharing(allowAllOrigins = true, allowOrigins = { "http://localhost" })
 public class TodoListResource {
 
 	/** Static logger instance. */
@@ -192,12 +194,11 @@ public class TodoListResource {
 	 *         enable CORS.
 	 */
 	private ResponseBuilder response(final Status status) {
-		return Response
-				.status(status)
-				.header("Access-Control-Allow-Origin", "*")
-				.header("Access-Control-Allow-Methods",
-						"POST, GET, PUT, UPDATE, OPTIONS, DELETE")
-				.header("Access-Control-Allow-Headers",
-						"Content-Type, Accept, X-Requested-With");
+		return Response.status(status);
+		// .header("Access-Control-Allow-Origin", "*")
+		// .header("Access-Control-Allow-Methods",
+		// "POST, GET, PUT, UPDATE, OPTIONS, DELETE")
+		// .header("Access-Control-Allow-Headers",
+		// "Content-Type, Accept, X-Requested-With");
 	}
 }
