@@ -28,7 +28,6 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,6 @@ import org.springframework.stereotype.Component;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @Component
-@CrossOriginResourceSharing(allowAllOrigins = true, allowOrigins = { "http://localhost" })
 public class TodoListResource {
 
 	/** Static logger instance. */
@@ -70,19 +68,19 @@ public class TodoListResource {
 	@Path("todos")
 	public Response getAllValues(@QueryParam("title") final String title) {
 		final TodoEntity[] all = dao.get();
-		return response(Status.OK).entity(mapper.fromEntity(all)).build();
+		return Response.ok().entity(mapper.fromEntity(all)).build();
 	}
 
 	@OPTIONS
 	@Path("todos")
 	public Response getOptions() {
-		return response(Status.OK).build();
+		return Response.ok().build();
 	}
 
 	@OPTIONS
 	@Path("todos/{id}")
 	public Response getOptions(@PathParam("id") final String ida) {
-		return response(Status.OK).build();
+		return Response.ok().build();
 	}
 
 	/**
@@ -99,9 +97,9 @@ public class TodoListResource {
 		ResponseBuilder response = null;
 		final Todo todo = mapper.fromEntity(dao.get(id));
 		if (todo == null) {
-			response = response(Status.NOT_FOUND);
+			response = Response.status(Status.NOT_FOUND);
 		} else {
-			response = response(Status.OK).entity(todo);
+			response = Response.status(Status.OK).entity(todo);
 		}
 		return response.build();
 	}
@@ -118,15 +116,15 @@ public class TodoListResource {
 			}
 			dao.add(mapper.toEntity(todo));
 			try {
-				response = response(Status.CREATED).location(
-						new URI("/helloworld/todos/" + todo.getId())).entity(
-						todo);
+				response = Response.status(Status.CREATED)
+						.location(new URI("/helloworld/todos/" + todo.getId()))
+						.entity(todo);
 			} catch (final URISyntaxException e) {
 				response = Response.serverError();
 
 			}
 		} else {
-			response = response(Status.CONFLICT);
+			response = Response.status(Status.CONFLICT);
 		}
 		return response.build();
 	}
@@ -137,14 +135,14 @@ public class TodoListResource {
 		ResponseBuilder response = null;
 		LOGGER.info("update:\n" + writeJSON(todo));
 		if (dao.get(id) == null) {
-			response = response(Status.NOT_FOUND).entity("Not found");
+			response = Response.status(Status.NOT_FOUND).entity("Not found");
 		} else {
 			todo.setId(id);
 			if (dao.update(mapper.toEntity(todo))) {
-				response = response(Status.OK).entity(todo);
+				response = Response.status(Status.OK).entity(todo);
 			} else {
-				response = response(Status.INTERNAL_SERVER_ERROR).entity(
-						"Not found");
+				response = Response.status(Status.INTERNAL_SERVER_ERROR)
+						.entity("Not found");
 			}
 		}
 
@@ -157,7 +155,7 @@ public class TodoListResource {
 		ResponseBuilder response = null;
 		LOGGER.info("delete: " + id);
 		if (dao.get(id) == null) {
-			response = response(Status.NOT_FOUND).entity("Not found");
+			response = Response.status(Status.NOT_FOUND).entity("Not found");
 		} else {
 			final Todo todo = mapper.fromEntity(dao.remove(id));
 			response = Response.ok(todo);
@@ -182,23 +180,5 @@ public class TodoListResource {
 		}
 		final String str = writer.toString() + '\n';
 		return str;
-	}
-
-	/**
-	 * Create a response with the supplied status and add the necessary headers
-	 * to enable CORS.
-	 * 
-	 * @param status
-	 *            the status to use in the response
-	 * @return a {@link ResponseBuilder} with the supplied status and headers to
-	 *         enable CORS.
-	 */
-	private ResponseBuilder response(final Status status) {
-		return Response.status(status);
-		// .header("Access-Control-Allow-Origin", "*")
-		// .header("Access-Control-Allow-Methods",
-		// "POST, GET, PUT, UPDATE, OPTIONS, DELETE")
-		// .header("Access-Control-Allow-Headers",
-		// "Content-Type, Accept, X-Requested-With");
 	}
 }
